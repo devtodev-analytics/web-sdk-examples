@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>devtodev Web SDK integration example</title>
+    <h1>devtodev Web SDK integration example</h1>
+    <script src="https://cdn.devtodev.com/sdk/web/v1/devtodevsdk.js"></script>
+    <style type="text/css">
+        .button_send{
+            cursor: pointer;
+            width:100%;
+            margin-top: 5px;
+        }
+        .button_send_2{
+            cursor: pointer;
+            width:100%;
+            margin-top: 0px;
+        }
+        .button_event{
+            background:#FBF0DB;
+            margin-bottom: 10px;
+        }
+        .button_session{
+            width:100%;
+            margin-bottom: 10px;
+        }
+        .text_event{
+            text-align:center;
+            text-decoration:underline;
+        }
+        .button_buf{
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+<table style="width:500px">
+    <tr><td class="text_event" colspan="2">Initialization:</td></tr>
+    <tr>
+        <td colspan="2">
+            <label for="jsApiKey">Devtodev Api Key: </label><input style="width:99%" type="text" id="jsApiKey" value=""/></br></br>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label for="jsUserId">User Id: </label></br><input style="width:90%" type="text" id="jsUserId" value=""/>
+        </td>
+        <td>
+            <input type="checkbox" id="jsActivePrevUserId"/><label for="jsPrevUserId">Previous User Id (old): </label>
+            </br><input style="width:90%" type="text" id="jsPrevUserId" disabled value=""/>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <label id="jsInitHin" style="color: red"></label>
+            </br></br>
+            <label for="jsDebugModeButton">Debug mode:</label><input type="checkbox" id="jsDebugModeButton"/></br></br>
+            <button style="width:100%" id="jsInitSdk">Init/Reinit</button></br>
+        </td>
+    </tr>
+</table>
+<table style="width:500px;display: none;margin-top: 10px" id="jsEvents">
+    <tr><td class="text_event" colspan="2">Session Data:</td></tr>
+    <tr>
+        <td>Session Length:</td>
+        <td><span id="jsLengthSession"></span></td>
+    </tr>
+    <tr>
+        <td>Session Start Date:</td>
+        <td><span id="jsStartDateSession"></span></td>
+    </tr>
+    <tr><td colspan="2">
+        <button class="button_session" id="jsManualSessionStart">Manual Session Start</button></br>
+    </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">User info:</td></tr>
+    <tr>
+        <td style="width: 500px;" colspan="2">
+            <div id="jsSetUserInfoData">
+                <label for="jsCurrentLevel">Current Level:</label></br>
+                <input style="width:99%" type="text" id="jsCurrentLevel"/></br>
+                <button class="button_send" id="jsUpdateUserInfo">Update User Info</button>
+                </br></br>
+            </div>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button  class="button_send" id="jsStartProgressionEvent">Start Progression Event</button>
+        </td>
+        <td>
+            <button class="button_send" id="jsEndProgressionEvent">End Progression Event</button>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">User card:</td></tr>
+    <tr>
+        <td>
+            <button  class="button_send" id="jsSetSimpleUserCard">Set(Simple)</button>
+        </td>
+        <td>
+            <button class="button_send" id="jsSetExtendedUserCard">Set(Extended)</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button  class="button_send" id="jsIncSimpleUserCard">Increment(Simple)</button>
+        </td>
+        <td>
+            <button class="button_send" id="jsIncExtendedUserCard">Increment(Extended)</button>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <button  class="button_send" id="jsRemoveSimpleUserCard">Remov(Simple)</button>
+        </td>
+        <td>
+            <button class="button_send" id="jsRemoveExtendedUserCard">Remove(Extended)</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <button  class="button_send" id="jsDeleteUserCard">Clear User Card</button>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">App Info:</td></tr>
+    <tr>
+        <td style="width: 500px;" colspan="2">
+            <div id="jsSetAppInfoData">
+                <label for="jsAppVersion">App Version:</label></br>
+                <input style="width:99%" type="text" id="jsAppVersion" value=""/></br>
+                <label for="jsCodeVersion">Code Version:</label></br>
+                <input style="width:99%" type="text" id="jsCodeVersion" value=""/></br>
+                <button class="button_send" id="jsAppInfoSend">Update App Info</button>
+                </br></br>
+            </div>
+        </td>
+    </tr>
+
+    <tr><td class="text_event" colspan="2">Cross Platform User Id:</td></tr>
+    <tr>
+        <td colspan="2"><label for="jsLevel">Cross Id:</label></br>
+            <input style="width:99%" type="text" id="jsCrossIdInput"/></td>
+    </tr>
+    <tr>
+        <td>
+            <button  class="button_send" id="jsSetCrossplatformUserId">Set Crossplatform User Id</button>
+        </td>
+        <td>
+            <button class="button_send" id="jsChangeCrossplatformUserId">Replace Crossplatform User Id</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <button  class="button_send button_send_2" id="jsGetCrossplatformUserId">Get Crossplatform User Id</button>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">Tutorial Event:</td></tr>
+    <tr>
+        <td colspan="2">
+            <div id="jsTutorData" style="margin-bottom: 10px">
+                <label for="jsTutor">Step:</label></br>
+                <input style="width:99%" type="text" id="jsTutor"/>
+                <button class="button_send button_event" id="jsSendTutor">Send Tutorial Event</button>
+            </div>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">Level Up Event:</td></tr>
+    <tr>
+        <td colspan="2"><label for="jsLevel">Level:</label></br>
+            <input style="width:99%" type="text" id="jsLevel"/></td>
+    </tr>
+    <tr>
+        <td>
+            <button  class="button_send button_event" id="jsLevelUpSendSimple">Send Level Up Event (Simple)</button>
+        </td>
+        <td>
+            <button class="button_send button_event" id="jsLevelUpSendExtended">Send Level Up Event (Extended)</button>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">Social Connect Event:</td></tr>
+    <tr>
+        <td colspan="2">
+                <button class="button_send button_event" id="jsSocialConn">Send Social Connect Event</button>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">Social Post Event:</td></tr>
+    <tr>
+        <td colspan="2">
+            <button class="button_send button_event" id="jsSocialPost">Send Social Post Event</button>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">Real Payment Event:</td></tr>
+    <tr>
+        <td colspan="2">
+            <button class="button_send button_event" id="jsRealPayment">Send Real Payment Event</button>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">In App Purchase Event:</td></tr>
+    <tr>
+        <td>
+            <button class="button_send button_event" id="jsInAppPurchasesSimple">Send In App Purchase Event (Simple)</button>
+        </td>
+        <td>
+            <button class="button_send button_event" id="jsInAppPurchasesExtended">Send In App Purchase Event (Extended)</button>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2">Custom Event:</td></tr>
+    <tr style="margin-bottom: 10px">
+        <td>
+            <button class="button_send button_event" id="jsCustomEventsSimple">Send Custom Event (Extended)</button>
+        </td>
+        <td>
+            <button class="button_send button_event" id="jsCustomEventsExtended">Send Custom Event (Extended)</button>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <button style="width:100%" class="button_buf" id="jsSendBufferedEvents">Send Buffered Events Immediately</button></br>
+        </td>
+    </tr>
+    <tr><td class="text_event" colspan="2"><div class="button_buf">Anticheat. Time Verification</div></td></tr>
+    <tr>
+        <td colspan="2"><button id="jsVerifyTimeButton" style="width:100%">Verify Time</button></td>
+    </tr>
+</table>
+
+<script type="text/javascript">
+
+    document.getElementById('jsManualSessionStart').onclick = function() {
+        devtodev.startSession();
+        updateDataSession();
+    };
+
+    document.getElementById('jsSendBufferedEvents').onclick = function() {
+        devtodev.sendBufferedEvents()
+    };
+    document.getElementById('jsSendTutor').onclick = function() {
+        devtodev.tutorialCompleted(parseInt(document.getElementById('jsTutor').value));
+        updateTutor();
+    };
+
+    document.getElementById('jsSetCrossplatformUserId').onclick = function() {
+        devtodev.setCrossplatformUserId(document.getElementById('jsCrossIdInput').value);
+    };
+    document.getElementById('jsChangeCrossplatformUserId').onclick = function() {
+        devtodev.replaceCrossplatformUserId(document.getElementById('jsCrossIdInput').value);
+    };
+    document.getElementById('jsGetCrossplatformUserId').onclick = function() {
+        alert(devtodev.getCrossplatformUserId());
+    };
+
+     /* *** setUserData *** */
+    document.getElementById('jsUpdateUserInfo').onclick = function() {
+        var params = {};
+        if(document.getElementById('jsCurrentLevel').value != '') {
+            params['currentLevel'] = parseInt(document.getElementById('jsCurrentLevel').value);
+        }
+        devtodev.setUserData(params);
+    };
+
+    document.getElementById('jsVerifyTimeButton').onclick = function() {
+        devtodev.verifyTime(function(timeStatus) {
+            alert(timeStatus);
+        });
+    };
+    document.getElementById('jsDebugModeButton').onclick = function() {
+        devtodev.setDebugLog(this.checked);
+        window.localStorage.setItem('dmode', this.checked ? 1 : 0);
+    };
+    document.getElementById('jsActivePrevUserId').onclick = function() {
+        if(this.checked) {
+            document.getElementById('jsPrevUserId').removeAttribute('disabled');
+        } else {
+            document.getElementById('jsPrevUserId').setAttribute('disabled', 'disabled');
+        }
+    };
+    document.getElementById('jsPrevUserId').onclick = function() {
+        devtodev.setDebugLog(this.checked);
+        window.localStorage.setItem('dmode', this.checked ? 1 : 0);
+    };
+    document.getElementById('jsInitSdk').onclick = function() {
+        devtodev.init(document.getElementById('jsApiKey').value, document.getElementById('jsUserId').value, document.getElementById('jsPrevUserId').value);
+        saveSettingsInStorage(document.getElementById('jsUserId').value, document.getElementById('jsApiKey').value, devtodev.debugLog);
+        document.getElementById('jsEvents').style.display = 'block';
+        document.getElementById('jsApiKey').readOnly = true;
+        document.getElementById('jsInitHin').innerText = '**change ID and push Reinit SDK if needed';
+        updateDataSession();
+        updateLevel();
+        initInterval();
+        updateTutor();
+        updateAppInfo();
+    };
+    document.getElementById('jsLevelUpSendExtended').onclick = function() {
+        var params = {
+            balance: [
+                {
+                    currency: 'piasters',
+                    amount: 1000
+                },
+                {
+                    currency: 'gold',
+                    amount: 10
+                }
+            ]
+        };
+        devtodev.levelUp(parseInt(document.getElementById('jsLevel').value), params);
+        updateLevel();
+    };
+    document.getElementById('jsLevelUpSendSimple').onclick = function() {
+        devtodev.levelUp(parseInt(document.getElementById('jsLevel').value));
+        updateLevel();
+    };
+    document.getElementById('jsAppInfoSend').onclick = function() {
+        var params = {};
+        if(document.getElementById('jsAppVersion').value != '') {
+            params['appVersion'] = document.getElementById('jsAppVersion').value;
+        }
+        if(document.getElementById('jsCodeVersion').value != '') {
+            params['codeVersion'] = document.getElementById('jsCodeVersion').value;
+        }
+        devtodev.setAppData(params);
+    };
+    document.getElementById('jsSocialConn').onclick = function() {
+        devtodev.socialNetworkConnect('fb');
+    };
+    document.getElementById('jsSocialPost').onclick = function() {
+        devtodev.socialNetworkPost('fb', 'achievement')
+    };
+    document.getElementById('jsRealPayment').onclick = function() {
+        devtodev.realPayment(((new Date()).getMilliseconds()).toString(), 10, 'gold pack 1', 'USD');
+    };
+    document.getElementById('jsInAppPurchasesSimple').onclick = function() {
+        var params = [
+            {
+                currency: 'piasters',
+                amount: 1
+            }
+        ];
+        devtodev.inAppPurchase('thing', 'singlecurrency', 1, params);
+    };
+    document.getElementById('jsInAppPurchasesExtended').onclick = function() {
+        var params = [
+            {
+                currency: 'piasters',
+                amount: 20
+            },
+            {
+                currency: 'gold',
+                amount: 5
+            }
+        ];
+        devtodev.inAppPurchase('expensive thing', 'multicurrency', 2, params);
+    };
+
+    document.getElementById('jsCustomEventsSimple').onclick = function() {
+        devtodev.customEvent('SimpleEvent');
+    };
+    document.getElementById('jsCustomEventsExtended').onclick = function() {
+        var name = 'ExtendedEvent',
+            params = [
+            {
+                name: 'victory',
+                type: 'string',
+                value: 'flowless'
+            },
+            {
+                name: 'score',
+                type: 'int',
+                value: '100500'
+            }
+        ];
+        devtodev.customEvent(name, params);
+    };
+
+    var saveSettingsInStorage = function(userId, apiKey, debugMode) {
+        window.localStorage.setItem('did', userId);
+        window.localStorage.setItem('dkey', apiKey);
+        window.localStorage.setItem('dmode', debugMode? 1 : 0);
+    };
+    var getSettingsInStorage = function() {
+        var debug = parseInt(window.localStorage.getItem('dmode')),
+                userId = window.localStorage.getItem('did'),
+                apiKey = window.localStorage.getItem('dkey');
+        devtodev.setDebugLog(debug ? true : false);
+        document.getElementById('jsDebugModeButton').checked = debug;
+        document.getElementById('jsUserId').value = userId;
+        document.getElementById('jsApiKey').value = apiKey;
+    };
+    var parseData = function(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var seconds = date.getSeconds();
+        var day = date.getDate();
+        var month = date.getMonth();
+        var year = date.getFullYear();
+        return day + "." + month + "." + year + " " + hours + ":" + minutes + ":" + seconds;
+    };
+    var updateDataSession = function() {
+        var timestamp = '';
+        if(devtodev.sessionObject) {
+            document.getElementById('jsLengthSession').innerHTML = devtodev.sessionObject.length;
+            timestamp = devtodev.sessionObject.startDate + ' (' + parseData(new Date(devtodev.sessionObject.startDate * 1000)) + ')';
+            document.getElementById('jsStartDateSession').innerHTML = timestamp;
+        }
+    };
+    var updateTutor = function() {
+        if(devtodev.storageManager) {
+            var packs = devtodev.storageManager.getTutorSteps();
+            document.getElementById('jsTutor').value = packs.length ? packs[packs.length -1 ] : 1;
+        }
+    };
+    var updateAppInfo = function() {
+        if(devtodev.packageManager) {
+            var codeVersion = devtodev.storageManager.getCodeVersion(),
+                    appVersion = devtodev.storageManager.getAppVersion();
+            document.getElementById('jsAppVersion').value = appVersion ? appVersion : '';
+            document.getElementById('jsCodeVersion').value = codeVersion ? codeVersion : '';
+        }
+    };
+    var updateLevel = function() {
+        var level = devtodev.storageManager.getCurrentLevel();
+        document.getElementById('jsCurrentLevel').value = level;
+        document.getElementById('jsLevel').value = level;
+    };
+    var intervalId = null;
+    var initInterval = function() {
+        intervalId = setInterval(function() {
+            updateDataSession();
+        }, 5000);
+    };
+    getSettingsInStorage();
+
+    document.getElementById('jsSetSimpleUserCard').onclick = function() {
+        var prop = 'Hair color',
+            value = 'copper red';
+        devtodev.user.set(prop, value);
+    };
+    document.getElementById('jsSetExtendedUserCard').onclick = function() {
+        var prop = {
+            'Hair color': 'blonde',
+            'Last payment': 100,
+            'Last order': ['Coloring','Hair Straightening'],
+            'Order date': new Date()
+        };
+        devtodev.user.set(prop);
+    };
+
+    document.getElementById('jsIncSimpleUserCard').onclick = function() {
+        var prop = 'Rounds played',
+            value = 1;
+        devtodev.user.increment(prop, value);
+    };
+    document.getElementById('jsIncExtendedUserCard').onclick = function() {
+        var prop = {
+            'Rounds played': 1,
+            'Enemies killed': 6,
+            'Last payment': 2
+        };
+        devtodev.user.increment(prop);
+    };
+
+    document.getElementById('jsRemoveSimpleUserCard').onclick = function() {
+        var prop = 'Rounds played';
+        devtodev.user.remove(prop);
+    };
+    document.getElementById('jsRemoveExtendedUserCard').onclick = function() {
+        var prop = [
+            'Rounds played',
+            'Last payment'];
+        devtodev.user.remove(prop);
+    };
+    document.getElementById('jsDeleteUserCard').onclick = function() {
+        devtodev.user.clearUser();
+    };
+
+    document.getElementById('jsStartProgressionEvent').onclick = function() {
+        var params = {
+            "source" : "locationSource",
+            "difficulty" : 1,
+            "success" : true,
+            "spent" :[
+                {
+                    currency : "piasters",
+                    amount: 2
+                },
+                {
+                    currency : "gold",
+                    amount: 4
+                }
+            ],
+            "earned" : [
+                {
+                    currency : "piasters",
+                    amount: 8
+                },
+                {
+                    currency : "gold",
+                    amount: 1
+                }
+            ]
+        };
+        devtodev.startProgressionEvent('test location', params);
+    };
+    document.getElementById('jsEndProgressionEvent').onclick = function() {
+        var params = {
+            "duration" : 80,
+            "spent" :[
+                {
+                    currency : "piasters",
+                    amount: 2
+                },
+                {
+                    currency : "gold",
+                    amount: 4
+                }
+            ],
+            "earned" : [
+                {
+                    currency : "piasters",
+                    amount: 8
+                }
+            ]
+
+        };
+        devtodev.endProgressionEvent('test location', params);
+    };
+</script>
+</body>
+
+</html>
