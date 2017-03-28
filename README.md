@@ -1,6 +1,6 @@
 Latest Version 
 --------------
-##### _Jul 12st, 2016_ - v1.5.2
+##### _Mar 17, 2017_ - v1.6.1
 
 Integration
 
