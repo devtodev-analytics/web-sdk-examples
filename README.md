@@ -1,8 +1,5 @@
-Latest Version 
---------------
-##### _Mar 17, 2017_ - v1.6.1
-
 Integration
+--------------
 
 To integrate SDK add the following line into your page.
 
