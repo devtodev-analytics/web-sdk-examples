@@ -55,6 +55,7 @@
             <label id="jsInitHin" style="color: red"></label>
             </br></br>
             <label for="jsDebugModeButton">Debug mode:</label><input type="checkbox" id="jsDebugModeButton"/></br></br>
+            <label for="jsTrackingStatusButton">Tracking status:</label><input type="checkbox" id="jsTrackingStatusButton"/></br></br>
             <button style="width:100%" id="jsInitSdk">Init/Reinit</button></br>
         </td>
     </tr>
@@ -267,6 +268,10 @@
         devtodev.setDebugLog(this.checked);
         window.localStorage.setItem('dmode', this.checked ? 1 : 0);
     };
+    document.getElementById('jsTrackingStatusButton').onclick = function() {
+        devtodev.setTrackingAvailability(this.checked);
+        window.localStorage.setItem('dts', this.checked ? 1 : 0);
+    };
     document.getElementById('jsActivePrevUserId').onclick = function() {
         if(this.checked) {
             document.getElementById('jsPrevUserId').removeAttribute('disabled');
@@ -280,7 +285,7 @@
     };
     document.getElementById('jsInitSdk').onclick = function() {
         devtodev.init(document.getElementById('jsApiKey').value, document.getElementById('jsUserId').value, document.getElementById('jsPrevUserId').value);
-        saveSettingsInStorage(document.getElementById('jsUserId').value, document.getElementById('jsApiKey').value, devtodev.debugLog);
+        saveSettingsInStorage(document.getElementById('jsUserId').value, document.getElementById('jsApiKey').value, devtodev.debugLog, devtodev.isTrackingAllowed);
         document.getElementById('jsEvents').style.display = 'block';
         document.getElementById('jsApiKey').readOnly = true;
         document.getElementById('jsInitHin').innerText = '**change ID and push Reinit SDK if needed';
@@ -372,19 +377,22 @@
         devtodev.customEvent(name, params);
     };
 
-    var saveSettingsInStorage = function(userId, apiKey, debugMode) {
+    var saveSettingsInStorage = function(userId, apiKey, debugMode, dts) {
         window.localStorage.setItem('did', userId);
         window.localStorage.setItem('dkey', apiKey);
         window.localStorage.setItem('dmode', debugMode? 1 : 0);
+        window.localStorage.setItem('dts', dts? 1 : 0);
     };
     var getSettingsInStorage = function() {
         var debug = parseInt(window.localStorage.getItem('dmode')),
+                trackingStatus = parseInt(window.localStorage.getItem('dts')),
                 userId = window.localStorage.getItem('did'),
                 apiKey = window.localStorage.getItem('dkey');
         devtodev.setDebugLog(debug ? true : false);
         document.getElementById('jsDebugModeButton').checked = debug;
         document.getElementById('jsUserId').value = userId;
         document.getElementById('jsApiKey').value = apiKey;
+        document.getElementById('jsTrackingStatusButton').value = trackingStatus;
     };
     var parseData = function(date) {
         var hours = date.getHours();
