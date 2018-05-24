@@ -68,8 +68,17 @@ package
 			this._initRealPayment(canvas.getChildByName('btnRealPayment') as Sprite);
 			this._initCrossUid(canvas.getChildByName('blockCuid') as Sprite);	
 			this._initUserCard(canvas.getChildByName('userCard') as Sprite);
-			this._initLocation(canvas.getChildByName('blockLocation') as Sprite);
+			this._initLocation(canvas.getChildByName('blockLocation') as Sprite);		
+			this._initServiceSetting(canvas.getChildByName('serviceSetting') as Sprite);
 		}
+		
+		private function _initServiceSetting(content: Sprite): void {
+			var trakingStatusCheckBox: CustomCheckBox = new CustomCheckBox(content.getChildByName('btnCheckTrakingStatus') as MovieClip);
+			new CustomButton(content.getChildByName('btnSendTrakingStatus') as Sprite, 'Send', function(): void {
+				devtodev.setTrackingAvailability(trakingStatusCheckBox.flag);
+			});
+		}
+		
 		private function _initLocation(content: Sprite): void {
 			var textInputLocationId: TextField = content.getChildByName('textLocationId') as TextField;
 			new CustomButton(content.getChildByName('btnStartLocation') as Sprite, 'Start Progression Event', function(): void {

@@ -5,7 +5,7 @@ package
 	import flash.external.ExternalInterface;
 
 	public class Devtodev
-	{
+	{ 
 		private var _stage: Stage;
 		private static var _instance: Devtodev;
 		
@@ -246,8 +246,7 @@ package
 		}
 		
 		/**
-		 * Activates console log
-		 * @param {boolean} status
+		 * Start session
 		 */
 		public function startSession(): void 
 		{
@@ -321,6 +320,20 @@ package
 		{
 			try {				
 				ExternalInterface.call('devtodev.endProgressionEvent', locationId, params.params);
+			} catch (error:Error) {
+				trace("An Error occurred: " + error.message + "\n");
+			}
+		}
+		
+		/**
+		 * The method of limiting the processing of user data. The right to be forgotten.
+		 * @param {boolean} status - send 'false' to erase user's personal data and stop collecting data of this user.
+		 * Send 'true' if you want to resume data collection.
+		 */
+		public function setTrackingAvailability(status: Boolean): void 
+		{
+			try {
+				ExternalInterface.call('devtodev.setTrackingAvailability', status);
 			} catch (error:Error) {
 				trace("An Error occurred: " + error.message + "\n");
 			}
